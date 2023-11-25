@@ -88,7 +88,7 @@ Thumbs.db
 
 # Security and configuration
 *.properties
-src/main/resources/application.properties
+!src/main/resources/application.properties
 src/main/resources/application.yml
 src/main/resources/application-*.yml
 src/main/resources/application-*.properties
@@ -100,8 +100,7 @@ src/main/resources/application-*.properties
 
 ### Swiflty Packages ###
 src/main/java/com/ktoda/swiftly/backend/init
-src/main/java/com/ktoda/swiftly/backend/security
-src/main/java/com/ktoda/swiftly/backend/config
-src/main/java/com/ktoda/swiftly/web/init
-src/main/java/com/ktoda/swiftly/web/security
-src/main/java/com/ktoda/swiftly/web/config
+src/main/resources/sql
+
+# Environment files
+*.env

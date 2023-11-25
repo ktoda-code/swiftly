@@ -1,0 +1,72 @@
+# Maven and Java
+target/
+*.jar
+!target/*.jar
+*.class
+*.war
+*.ear
+*.iml
+*.hprof
+.hs_err_pid*
+
+# Maven Wrapper files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+*.class
+*.swp
+*.swo
+*.tmp
+*.bak
+*.swpx
+*.sublime-workspace
+*.sublime-project
+.vscode/
+*.vscode*
+
+# Build output directories
+target/
+out/
+build/
+dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git and CI/CD
+.git/
+.gitignore
+.dockerignore
+*.gitmodules
+CI/
+CI/*
+.gitlab-ci.yml
+.jenkins
+.travis.yml
+
+# Node modules
+node_modules/
+
+# Test and Sample files
+test/
+tests/
+*.test.*
+*.spec.*
