@@ -25,7 +25,7 @@ public class UserRestController implements ApiInterface<String, UserCreateReques
         return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping
+    @GetMapping("/email")
     public ResponseEntity<?> findByEmail(@RequestParam("email") String email) {
         return ResponseEntity.ok(service.findByEmail(email));
     }
