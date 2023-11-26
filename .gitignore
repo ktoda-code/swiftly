@@ -89,6 +89,8 @@ Thumbs.db
 # Security and configuration
 *.properties
 !src/main/resources/application.properties
+!src/main/resources/application-dev.properties
+!src/main/resources/application-prod.properties
 src/main/resources/application.yml
 src/main/resources/application-*.yml
 src/main/resources/application-*.properties
@@ -104,3 +106,6 @@ src/main/resources/sql
 
 # Environment files
 *.env
+
+# Data files
+/data/db
