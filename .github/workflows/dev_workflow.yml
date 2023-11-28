@@ -86,8 +86,7 @@ jobs:
         id: test_inspect
         run: |
           echo "exitcode=$(docker inspect -f '{{ .State.ExitCode }}' tests)" >> $GITHUB_OUTPUT
-          echo "Testing..."
-          cat $GITHUB_OUTPUT
+          echo (grep 'exitcode=' $GITHUB_OUTPUT | cut -d '=' -f2)
 
       # Check tests results
       - name: Check test results
