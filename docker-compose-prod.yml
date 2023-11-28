@@ -7,6 +7,7 @@ networks:
 services:
   swiftly-backend:
     build: .
+    image: ktodacode/swiftly:prod
     ports:
       - "8080:8080"
     depends_on:
