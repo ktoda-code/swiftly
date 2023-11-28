@@ -1,4 +1,4 @@
-name: Dev CI/CD Workflow with Docker Hub
+name: ci
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-test-deploy:
-    name: Run CI-CD suite
+    name: Run ci pipeline
     runs-on: ubuntu-latest
     env:
       COMPOSE_FILE: ./docker-compose-dev.yml
@@ -84,13 +84,15 @@ jobs:
       # Inspect exitcode
       - name: Inspect test container
         id: test_inspect
-        run: echo "::set-output name=exitcode::$(docker inspect -f '{{ .State.ExitCode }}' tests)"
+        run: |
+          echo "exitcode=$(docker inspect -f '{{ .State.ExitCode }}' tests)" >> $GITHUB_OUTPUT
 
       # Check tests results
       - name: Check test results
         if: always()
         run: |
-          if [ "${{ steps.test_inspect.outputs.exitcode }}" != "0" ]; then
+          exitcode=$(cat $GITHUB_OUTPUT | grep exitcode | cut -d '=' -f2)
+          if [ "$exitcode" != "0" ]; then
             echo "Tests failed"
             exit 1
           fi
