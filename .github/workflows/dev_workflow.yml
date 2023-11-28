@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMPOSE_FILE: ./docker-compose-dev.yml
-      DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
-      DOCKER_PASS: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     steps:
       # Checkout the repository
@@ -62,10 +60,10 @@ jobs:
 
       # Login to Docker Hub
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3
         with:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       # Build and push Docker image
       - name: Build and push Docker image
@@ -113,6 +111,7 @@ jobs:
 
       # Removing dangling images
       - name: Removing prune images
+        if: always()
         run: docker image prune -f
 
       # Logout of Docker Hub
