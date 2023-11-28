@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMPOSE_FILE: ./docker-compose-dev.yml
+      GITHUB_OUTPUT: output
 
     steps:
       # Checkout the repository
