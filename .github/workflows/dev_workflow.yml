@@ -86,12 +86,14 @@ jobs:
         id: test_inspect
         run: |
           echo "exitcode=$(docker inspect -f '{{ .State.ExitCode }}' tests)" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
 
       # Check tests results
       - name: Check test results
         if: always()
         run: |
-          exitcode=$(grep 'exitcode=' $GITHUB_OUTPUT | cut -d '=' -f2)
+          cat $GITHUB_OUTPUT
+          exitcode=$(grep 'exitcode=' $GITHUB_OUTPUT | cut -d'=' -f2)
           echo $exitcode
           if [ "$exitcode" != "0" ]; then
             echo "Tests failed"
