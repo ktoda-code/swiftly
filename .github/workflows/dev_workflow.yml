@@ -85,13 +85,14 @@ jobs:
       - name: Inspect test container
         id: test_inspect
         run: |
-          echo "exitcode=$(docker inspect -f '{{ .State.ExitCode }}' tests)" >> $GITHUB_OUTPUT
+          echo "$(docker inspect -f '{{ .State.ExitCode }}' tests)" >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
 
       # Check tests results
       - name: Check test results
         if: always()
         run: |
-          cat ${{ steps.test_inspect.outputs }}
+          echo ${{ steps.test_inspect.outputs.* }}
           exitcode=$(grep 'exitcode=' $GITHUB_OUTPUT | cut -d'=' -f2)
           echo $exitcode
           if [ "$exitcode" != "0" ]; then
