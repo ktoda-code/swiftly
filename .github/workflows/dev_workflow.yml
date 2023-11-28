@@ -92,7 +92,7 @@ jobs:
       - name: Check test results
         if: always()
         run: |
-          exitcode=$(cat $GITHUB_OUTPUT | grep exitcode | cut -d '=' -f2)
+          exitcode=$(cat $GITHUB_OUTPUT)
           if [ "$exitcode" != "0" ]; then
             echo "Tests failed"
             exit 1
