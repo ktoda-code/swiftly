@@ -1,7 +1,7 @@
 # Dockerfile for Swiftly application
 
 # Stage 1: Build stage
-FROM maven:3.8.4-openjdk-17 as build
+FROM maven:3.9.5-amazoncorretto-17 as base
 
 # Copy pom.xml and install dependencies
 COPY pom.xml /usr/src/app/
@@ -14,13 +14,22 @@ COPY src /usr/src/app/src
 # Build the application
 RUN mvn package -DskipTests
 
-# Stage 2: Run stage
-FROM openjdk:17
+# Stage 2: Test (size > 1000 MB) - test
+FROM base as test
+CMD [ "mvn", "test" ]
+
+# Stage 3: Development (size > 1000 MB) - dev
+FROM base as development
+CMD [ "mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'" ]
+
+# Stage 3: Production stage (size < 400 MB) - latest
+FROM amazoncorretto:17-alpine as production
+EXPOSE 8080
 
 # Copy built JAR from the build stage
-COPY --from=build /usr/src/app/target/swiftly-1.0.0-SNAPSHOT.jar /usr/app/swiftly-1.0.0-SNAPSHOT.jar
+COPY --from=base /usr/src/app/target/swiftly-*.jar /usr/app/swiftly.jar
 
 WORKDIR /usr/app
 
 # Command to run the application
-CMD ["java", "-jar", "swiftly-1.0.0-SNAPSHOT.jar"]
+CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "swiftly.jar"]

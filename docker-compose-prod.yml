@@ -7,7 +7,7 @@ networks:
 services:
   swiftly-backend:
     build: .
-    image: ktodacode/swiftly:prod
+    image: ktodacode/swiftly:latest
     ports:
       - "8080:8080"
     depends_on:
@@ -27,8 +27,22 @@ services:
     env_file:
       - application-variables-prod.env
 
+  swiftly-tests:
+    build:
+      context: .
+      target: test
+    image: ktodacode/swiftly:latest-test
+    container_name: tests
+    depends_on:
+      - swiftly-database
+    networks:
+      - swiftly-network
+    restart: no
+    env_file:
+      - application-variables-prod.env
+
   swiftly-database:
-    image: postgres:latest
+    image: postgres:15
     ports:
       - "5432:5432"
     volumes:
