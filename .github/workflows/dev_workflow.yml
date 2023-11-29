@@ -24,7 +24,12 @@ jobs:
 
       - name: Generate Cache Key
         id: cache-key
-        run: echo "key=${{ runner.os }}-m2-$(echo ${{ hashFiles('**/pom.xml') }})-dev" >> $GITHUB_ENV
+        run: |
+          echo "key=${{ runner.os }}-m2-$(echo ${{ hashFiles('**/pom.xml') }})-dev" >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
+
+      - name: Echo Cache Key
+        run: echo "Cache Key':' ${{ steps.cache-key.outputs.key }}"
 
       - name: Create .env File
         run: |
@@ -53,7 +58,7 @@ jobs:
         uses: actions/cache@v3.3.2
         with:
           path: ~/.m2
-          key: ${{ needs.prepare-environment.outputs.key }}
+          key: ${{ needs.prepare-environment.outputs.cache-key }}
           restore-keys: ${{ runner.os }}-m2-dev
 
   build-push-test-image:
