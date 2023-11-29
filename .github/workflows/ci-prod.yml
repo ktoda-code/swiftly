@@ -27,6 +27,7 @@ jobs:
 
   build-and-push-test-image:
     name: Build and Push Test Image
+    needs: [ build-and-test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -74,6 +75,7 @@ jobs:
 
   build-and-push-prod-image:
     name: Build and Push Prod Image
+    needs: [ build-and-test, build-and-push-test-image ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
