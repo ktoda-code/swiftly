@@ -44,7 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare-environment
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - uses: actions/cache@v3.3.2
         with:
@@ -56,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-cache-dependencies
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -71,14 +75,19 @@ jobs:
           target: test
           tags: ktodacode/swiftly:latest-test
 
-      - run: docker image prune -f
+      - name: Removing Prune Images
+        run: docker image prune -f
 
-      - run: docker logout
+      - name: Logout from Docker Hub
+        run: docker logout
 
   build-push-prod-image:
     runs-on: ubuntu-latest
     needs: build-cache-dependencies
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
