@@ -47,6 +47,9 @@ jobs:
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DS_USER_URL }}" >> application-variables-dev.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DS_PASS_URL }}" >> application-variables-dev.env
 
+      - name: Check files
+        run: ls -l
+
   build-cache-dependencies:
     runs-on: ubuntu-latest
     needs: prepare-environment
@@ -76,6 +79,9 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Check env file
+        run: echo application-variables-dev.env
 
       - name: Build and Push Test Image
         uses: docker/build-push-action@v5
@@ -108,6 +114,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Check env file
+        run: echo application-variables-dev.env
+
       - name: Build and Push Docker Dev Image
         uses: docker/build-push-action@v5
         with:
@@ -127,7 +136,7 @@ jobs:
 
   run-tests:
     runs-on: ubuntu-latest
-    needs: build-push-test-image
+    needs: build-cache-dependencies
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
