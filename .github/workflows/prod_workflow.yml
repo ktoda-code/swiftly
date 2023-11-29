@@ -20,7 +20,7 @@ jobs:
 
       - name: Generate Cache Key
         id: cache-key
-        run: echo "name=key::$(echo ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-prod)" >> $GITHUB_OUTPUT
+        run: echo "key=${{ runner.os }}-m2-$(echo ${{ hashFiles('**/pom.xml') }})-prod" >> $GITHUB_ENV
 
       - name: Create .env File
         run: |
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/cache@v3.3.2
         with:
           path: ~/.m2
-          key: ${{ needs.prepare-environment.cache-key.outputs.name }}
+          key: ${{ needs.prepare-environment.outputs.key }}
           restore-keys: ${{ runner.os }}-m2-prod
 
   build-push-test-image:
@@ -65,7 +65,7 @@ jobs:
         with:
           context: .
           push: true
-          file: Dockerfile
+          file: ./Dockerfile
           target: test
           tags: ktodacode/swiftly:latest-test
 
@@ -88,7 +88,7 @@ jobs:
         with:
           context: .
           push: true
-          file: Dockerfile
+          file: ./Dockerfile
           target: production
           tags: ktodacode/swiftly:latest
           cache-from: type=registry,ref=ktodacode/swiftly:latest
