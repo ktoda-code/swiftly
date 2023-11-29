@@ -68,6 +68,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          target: test
           tags: ktodacode/swiftly:latest-test
           cache-from: type=registry,ref=ktodacode/swiftly:latest-test
           cache-to: type=inline
@@ -79,6 +80,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          target: production
           tags: ktodacode/swiftly:latest
           cache-from: type=registry,ref=ktodacode/swiftly:latest
           cache-to: type=inline
