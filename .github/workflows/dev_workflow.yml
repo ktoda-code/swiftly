@@ -29,7 +29,7 @@ jobs:
           echo $GITHUB_OUTPUT
 
       - name: Echo Cache Key
-        run: echo "Cache Key':' ${{ steps.cache-key.outputs.key }}"
+        run: echo "${{ steps.cache-key.outputs.key }}"
 
       - name: Create .env File
         run: |
@@ -75,7 +75,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: List files in the repository
-        run: ls -l
+        run: | 
+          ls -l
+          pwd
 
       - name: Build and Push Test Image
         uses: docker/build-push-action@v5
