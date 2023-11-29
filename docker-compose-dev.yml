@@ -6,7 +6,9 @@ networks:
 
 services:
   swiftly-backend:
-    build: .
+    build:
+      context: .
+      target: development
     image: ktodacode/swiftly:dev
     container_name: backend
     ports:
@@ -32,8 +34,8 @@ services:
   swiftly-tests:
     build:
       context: .
-      target: build
-    image: ktodacode/swiftly:dev
+      target: test
+    image: ktodacode/swiftly:test
     container_name: tests
     depends_on:
       - swiftly-database
@@ -42,10 +44,9 @@ services:
     restart: no
     env_file:
       - application-variables-dev.env
-    command: [ "mvn", "test" ] # Overrides the default CMD of the Dockerfile
 
   swiftly-database:
-    image: postgres:latest
+    image: postgres:15
     container_name: database
     ports:
       - "5432:5432"

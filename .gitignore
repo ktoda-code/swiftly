@@ -110,7 +110,5 @@ src/main/resources/sql
 # Data files
 /data/db
 
-# Docker files
-docker-compose-prod.yml
 
 
