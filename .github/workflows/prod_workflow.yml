@@ -22,7 +22,8 @@ jobs:
         id: cache-key
         run: |
           echo "key=${{ runner.os }}-m2-$(echo ${{ hashFiles('**/pom.xml') }})-prod" >> $GITHUB_OUTPUT
-          
+          echo $GITHUB_OUTPUT
+
       - name: Create .env File
         run: |
           echo "# Database configuration" >> application-variables-prod.env

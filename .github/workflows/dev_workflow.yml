@@ -75,9 +75,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: List files in the repository
-        run: | 
+        run: |
           ls -l
           pwd
+          ls -l ..
 
       - name: Build and Push Test Image
         uses: docker/build-push-action@v5
