@@ -27,10 +27,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-dev
           restore-keys: ${{ runner.os }}-m2-dev
 
-  create-env-file:
-    name: Create ENV File
+  build-and-push-test-image:
+    name: Build and Push Test Image
     runs-on: ubuntu-latest
-    needs: build-and-test
     steps:
       - uses: actions/checkout@v4
       - name: Create .env file
@@ -48,22 +47,6 @@ jobs:
           echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DS_URL }}" >> application-variables-dev.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DS_USER_URL }}" >> application-variables-dev.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DS_PASS_URL }}" >> application-variables-dev.env
-      - name: Upload .env file
-        uses: actions/upload-artifact@v3
-        with:
-          name: env-file
-          path: application-variables-dev.env
-
-  build-and-push-test-image:
-    name: Build and Push Test Image
-    runs-on: ubuntu-latest
-    needs: create-env-file
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download .env file
-        uses: actions/download-artifact@v3
-        with:
-          name: env-file
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -84,6 +67,9 @@ jobs:
       - name: Removing prune images
         if: always()
         run: docker image prune -f
+      - name: Remove env file
+        if: always()
+        run: rm application-variables-dev.env
       - name: Logout from Docker Hub
         if: always()
         run: docker logout
@@ -91,13 +77,23 @@ jobs:
   build-and-push-dev-image:
     name: Build and Push Dev Image
     runs-on: ubuntu-latest
-    needs: create-env-file
     steps:
       - uses: actions/checkout@v4
-      - name: Download .env file
-        uses: actions/download-artifact@v3
-        with:
-          name: env-file
+      - name: Create .env file
+        run: |
+          echo "# Database configuration" >> application-variables-dev.env
+          echo "DB_HOST=${{ secrets.DB_HOST_DEV }}" >> application-variables-dev.env
+          echo "DB_NAME=${{ secrets.DB_NAME_DEV }}" >> application-variables-dev.env
+          echo "DB_USER=${{ secrets.DB_USER_DEV }}" >> application-variables-dev.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASS_DEV }}" >> application-variables-dev.env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB_DEV }}" >> application-variables-dev.env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER_DEV }}" >> application-variables-dev.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASS_DEV }}" >> application-variables-dev.env
+          echo "# Spring configuration" >> application-variables-dev.env
+          echo "SPRING_PROFILES_ACTIVE=dev" >> application-variables-dev.env
+          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DS_URL }}" >> application-variables-dev.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DS_USER_URL }}" >> application-variables-dev.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DS_PASS_URL }}" >> application-variables-dev.env
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -118,6 +114,9 @@ jobs:
       - name: Removing prune images
         if: always()
         run: docker image prune -f
+      - name: Remove env file
+        if: always()
+        run: rm application-variables-dev.env
       - name: Logout from Docker Hub
         if: always()
         run: docker logout

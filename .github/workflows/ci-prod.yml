@@ -5,27 +5,19 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test-deploy:
-    name: Run ci pipeline
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the repository
       - uses: actions/checkout@v4
-
-      # Set up Java Environment
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'oracle'
           cache: 'maven'
-
-      # Verify phase (run tests against the environment)
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots verify
-
-      # Cache Maven packages
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -33,7 +25,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-prod
           restore-keys: ${{ runner.os }}-m2-prod
 
-      # Set up Env file
+  build-and-push-test-image:
+    name: Build and Push Test Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Create .env file
         run: |
           echo "# Database configuration" >> application-variables-prod.env
@@ -49,20 +45,14 @@ jobs:
           echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DS_URL_PROD }}" >> application-variables-prod.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DS_USER_URL_PROD }}" >> application-variables-prod.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DS_PASS_URL_PROD }}" >> application-variables-prod.env
-
-      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      # Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      # Build and push test img
-      - name: Build and push latest-test image
+      - name: Build and push test image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -72,9 +62,44 @@ jobs:
           tags: ktodacode/swiftly:latest-test
           cache-from: type=registry,ref=ktodacode/swiftly:latest-test
           cache-to: type=inline
+      - name: Removing prune images
+        if: always()
+        run: docker image prune -f
+      - name: Remove env file
+        if: always()
+        run: rm application-variables-prod.env
+      - name: Logout from Docker Hub
+        if: always()
+        run: docker logout
 
-      # Build and push Docker image
-      - name: Build and push latest image
+  build-and-push-prod-image:
+    name: Build and Push Prod Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create .env file
+        run: |
+          echo "# Database configuration" >> application-variables-prod.env
+          echo "DB_HOST=${{ secrets.DB_HOST_PROD }}" >> application-variables-prod.env
+          echo "DB_NAME=${{ secrets.DB_NAME_PROD }}" >> application-variables-prod.env
+          echo "DB_USER=${{ secrets.DB_USER_PROD }}" >> application-variables-prod.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASS_PROD }}" >> application-variables-prod.env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB_PROD }}" >> application-variables-prod.env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER_PROD }}" >> application-variables-prod.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASS_PROD }}" >> application-variables-prod.env
+          echo "# Spring configuration" >> application-variables-prod.env
+          echo "SPRING_PROFILES_ACTIVE=prod" >> application-variables-prod.env
+          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DS_URL_PROD }}" >> application-variables-prod.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DS_USER_URL_PROD }}" >> application-variables-prod.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DS_PASS_URL_PROD }}" >> application-variables-prod.env
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Build and push prod image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -84,18 +109,12 @@ jobs:
           tags: ktodacode/swiftly:latest
           cache-from: type=registry,ref=ktodacode/swiftly:latest
           cache-to: type=inline
-
-      # Removing dangling images
       - name: Removing prune images
         if: always()
         run: docker image prune -f
-
-      # Logout of Docker Hub
+      - name: Remove env file
+        if: always()
+        run: rm application-variables-prod.env
       - name: Logout from Docker Hub
         if: always()
         run: docker logout
-
-      # Delete .env file
-      - name: Delete env file
-        if: always()
-        run: rm application-variables-prod.env
