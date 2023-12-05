@@ -1,5 +1,6 @@
 package com.ktoda.swiftly.backend.user;
 
+import com.ktoda.swiftly.backend.event.Event;
 import com.ktoda.swiftly.backend.password.PasswordService;
 import com.ktoda.swiftly.backend.user.dtos.UserCreateRequest;
 import com.ktoda.swiftly.backend.user.dtos.UserUpdateRequest;
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException("User already exists with this information");
         }
 
-        user.addBoard(new Board("My First Board"));
+        user.addBoard(new Board("My First Board", user));
 
         return save(user);
     }

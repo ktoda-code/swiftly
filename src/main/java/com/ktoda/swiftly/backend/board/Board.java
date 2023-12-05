@@ -29,8 +29,9 @@ public class Board implements Serializable {
     @EqualsAndHashCode.Exclude
     private List<Status> statuses = new ArrayList<>(3);
 
-    public Board(String name) {
+    public Board(String name, User user) {
         this.name = name;
+        this.user = user;
         statuses.add(new Status("Backlog", null));
         statuses.add(new Status("In Progress", new Color(58, 87, 185, 218)));
         statuses.add(new Status("Done", new Color(47, 150, 81, 207)));

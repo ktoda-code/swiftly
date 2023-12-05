@@ -101,7 +101,6 @@ src/main/resources/application-*.properties
 *.dmp
 
 ### Swiflty Packages ###
-src/main/java/com/ktoda/swiftly/backend/init
 src/main/resources/sql
 
 # Environment files
