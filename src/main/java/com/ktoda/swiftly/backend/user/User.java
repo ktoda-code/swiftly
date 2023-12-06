@@ -79,18 +79,22 @@ public class User implements Serializable {
 
     public void addBoard(Board board) {
         boards.add(board);
+        board.setUser(this);
     }
 
     public void removeBoard(Board board) {
         boards.remove(board);
+        board.setUser(null);
     }
 
     public void addEvent(Event event) {
         events.add(event);
+        event.setUser(this);
     }
 
     public void removeEvent(Event event) {
         events.remove(event);
+        event.setUser(null);
     }
 
 }

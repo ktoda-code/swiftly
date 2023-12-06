@@ -14,5 +14,12 @@ public interface UserService extends Service<User, String> {
 
     User update(UserUpdateRequest updateRequest);
 
+    User addBoard(String userId, Board board);
+
+    User removeBoard(String userId, Board board);
+
+    User addEvent(String userId, Event event);
+
+    User removeEvent(String userId, Event event);
 
 }
