@@ -35,11 +35,12 @@ public class Status implements Serializable {
     @Transient
     private Color defaultColor = new Color(148, 148, 148, 202);
 
-    public Status(String name, Color color) {
+    public Status(String name, Color color, Board board) {
         this.name = name;
         if (color == null) {
             this.color = defaultColor;
         }
+        this.board = board;
     }
 
     public void addTask(Task task) {

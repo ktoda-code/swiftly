@@ -72,6 +72,16 @@ public class Event implements Serializable {
         this.taskGroups = taskGroups;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+        if (this.user == null) {
+            return;
+        }
+        if (!user.getEvents().contains(this)) {
+            user.getEvents().add(this);
+        }
+    }
+
     public void addTask(Task task) {
         tasks.add(task);
     }

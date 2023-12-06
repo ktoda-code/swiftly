@@ -11,12 +11,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordService passwordService;
@@ -97,6 +99,38 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User not found");
         }
 
+        return save(user);
+    }
+
+    @Override
+    public User addBoard(String userId, Board board) {
+        User user = findById(userId);
+
+        user.addBoard(board);
+        return save(user);
+    }
+
+    @Override
+    public User removeBoard(String userId, Board board) {
+        User user = findById(userId);
+
+        user.removeBoard(board);
+        return save(user);
+    }
+
+    @Override
+    public User addEvent(String userId, Event event) {
+        User user = findById(userId);
+
+        user.addEvent(event);
+        return save(user);
+    }
+
+    @Override
+    public User removeEvent(String userId, Event event) {
+        User user = findById(userId);
+
+        user.removeEvent(event);
         return save(user);
     }
 
